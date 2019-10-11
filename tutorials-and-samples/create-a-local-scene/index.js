@@ -124,7 +124,7 @@ require(
 
     /*****WELLS LAYERS*****/
 
-    let wellsLayer = new FeatureLayer({
+    let wellsDepthLayer = new FeatureLayer({
       url: wellsUrl,
       definitionExpression:
         "Status = 'CBM' OR Status = 'EOR' OR Status = 'GAS' OR Status = 'INJ' OR Status = 'O&G' OR Status = 'OIL' OR Status = 'SWD'",
@@ -149,10 +149,151 @@ require(
       }
     })
 
+    /*****QUAKES DEPTH RENDERER*****/
+
+    let quakesRenderer = {
+      type: "simple",
+      symbol: {
+        type: "point-3d",
+        symbolLayers: [
+          {
+            type: "object",
+            resource: {
+              primitive: "sphere"
+            }
+          }
+        ]
+      },
+      visualVariables: [
+        {
+          type: "color",
+          field: "date_evt",
+          stops: [
+            {
+              value: startDate.valueOf(),
+              color: "white"
+            },
+            {
+              value: endDate.valueOf(),
+              color: "red"
+            }
+          ]
+        },
+        {
+          type: "size",
+          field: "mag",
+          axis: "all",
+          stops: [
+            {
+              value: 2,
+              size: 100
+            },
+            {
+              value: 5,
+              size: 2000
+            }
+          ]
+        }
+      ]
+    }
+
+    /*****QUAKES SURFACE RENDERer*****/
+
+    let surfaceSym = {
+      type: "point-3d",
+      symbolLayers: [
+        {
+          type: "icon",
+          material: {
+            color: [179, 75, 75]
+          },
+          resource: {
+            primitive: "circle"
+          }
+        }
+      ]
+    }
+
+    let quakesSurfaceRenderer = {
+      type: "simple",
+      symbol: surfaceSym,
+      visualVariables: [
+        {
+          type: "size",
+          field: "mag",
+          axis: "all",
+          stops: [
+            {
+              value: 2,
+              size: 3
+            },
+            {
+              value: 5,
+              size: 50
+            }
+          ]
+        }
+      ]
+    }
+
+    /*****QUAKE POPUP*****/
+
+    let quakeTemplate = {
+      title: "{place}",
+      content:
+        "<b>Date and time:</b> {date_evt}<br>" +
+        "<b>Magnitude (0-10): </b> {mag}<br>" +
+        "<b>Depth: </b> {depth} km<br>",
+      fieldInfos: [
+        {
+          fieldName: "date_evt",
+          format: {
+            dateFormat: "short-date-short-time"
+          }
+        }
+      ],
+      actions: [
+        {
+          id: "find-wells",
+          title: "Nearby wells",
+          className: "esri-icon-notice-round"
+        }
+      ]
+    }
+
+    /*****QUAKES LAYERS******/
+    let quakesDepthLayer = new FeatureLayer({
+      url: quakesUrl,
+      definitionExpression: "mag >= 2",
+      outFields: ["*"],
+      renderer: quakesRenderer,
+      popupTemplate: quakeTemplate,
+      returnZ: true,
+      elevationInfo: {
+        mode: "relative-to-ground"
+      }
+    })
+
+    let quakesSurfaceLayer = new FeatureLayer({
+      url: quakesUrl,
+      definitionExpression: "mag >= 2",
+      outFields: ["*"],
+      renderer: quakesSurfaceRenderer,
+      popupTemplate: quakeTemplate,
+      opacity: 0.6,
+      elevationInfo: {
+        mode: "on-the-ground"
+      }
+    })
+
+    /*****MAP AND VIEW*****/
+
     let map = new Map({
       basemap: "topo",
       layers: [
-        wellsLayer,
+        quakesDepthLayer,
+        quakesSurfaceLayer,
+        wellsDepthLayer,
         wellsSurfaceLayer
       ],
       ground: {
@@ -173,4 +314,33 @@ require(
         starsEnabled: false
       }
     })
+
+    var wellsBufferParams = {
+      spatialRelationship: "esriSpatialRelIntersects",
+      distance: 10,
+      units: "kilometers",
+      where:
+        "Status = 'CBM' OR Status = 'EDR' OR Status = 'GAS' OR Status = 'INJ' OR Status = 'O&G' OR Status = 'OIL' OR Status = 'SWD'"
+    };
+
+    view.popup.on("trigger-action", function (event) {
+      if (event.action.id === "find-wells") {
+        console.log('GEO:', view.popup.selectedFeature.geometry)
+        wellsBufferParams.geometry = view.popup.selectedFeature.geometry;
+        wellsDepthLayer
+          .queryFeatureCount(wellsBufferParams)
+          .then(function (response) {
+            var results =
+              "<b>" +
+              response +
+              "</b> active wells are within 10 km of this earthquake.";
+            view.popup.content = results;
+          })
+          .catch(function (error) {
+            console.log("action failed: ", error);
+          });
+      } else {
+        return;
+      }
+    });
   })
