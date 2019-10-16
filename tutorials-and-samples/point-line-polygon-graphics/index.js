@@ -13,8 +13,8 @@ require([
   let view = new MapView({
     container: "viewDiv",
     map: map,
-    center: [-118.80500, 34.02700],
-    zoom: 13
+    center: [-118.80500, 34.01300],
+    zoom: 15
   });
 
   let graphicsLayer = new GraphicsLayer()
@@ -80,7 +80,7 @@ require([
     type: "simple-fill",
     color: [50, 100, 255, .5],
     outline: {
-      // color: [50, 100, 255],
+      color: [50, 100, 255],
       width: 1
     },
     style: "backward-diagonal"
