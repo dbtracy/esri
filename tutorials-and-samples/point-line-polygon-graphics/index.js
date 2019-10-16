@@ -36,9 +36,21 @@ require([
     size: 10
   }
 
+  let attributes = {
+    Name: "My point",
+    Location: "Point Dume State Beach",
+  }
+
+  let popupTemplate = {
+    title: "{Name}",
+    content: "I am located at <b>{Location}</b>."
+  }
+
   let pointGraphic = new Graphic({
     geometry: point,
-    symbol: simpleMarkerSymbol
+    symbol: simpleMarkerSymbol,
+    attributes: attributes,
+    popupTemplate: popupTemplate
   })
 
   graphicsLayer.add(pointGraphic)
@@ -92,4 +104,42 @@ require([
   })
 
   graphicsLayer.add(polygonGraphic)
+
+  let pictureGraphic = new Graphic({
+    geometry: {
+      type: "point",
+      longitude: -118.80657463861,
+      latitude: 34.0005930608889
+    },
+    symbol: {
+      type: "picture-marker",
+      url: "https://developers.arcgis.com/labs/images/bluepin.png",
+      width: "14px",
+      height: "26px"
+    }
+  })
+
+  graphicsLayer.add(pictureGraphic)
+
+  let textGraphic = new Graphic({
+    geometry: {
+      type: "point",
+      longitude: -118.80657463861,
+      latitude: 34.0005930608889
+    },
+    symbol: {
+      type: "text",
+      color: [25, 25, 25],
+      haloColor: [255, 255, 255],
+      haloSize: "1px",
+      text: "This is my location!",
+      xoffset: 0,
+      yoffset: -25,
+      font: {
+        size: 12
+      }
+    }
+  })
+
+  graphicsLayer.add(textGraphic)
 });
