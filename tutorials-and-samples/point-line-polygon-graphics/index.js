@@ -2,8 +2,9 @@ require([
   "esri/Map",
   "esri/views/MapView",
   "esri/Graphic",
-  "esri/layers/GraphicsLayer"
-], function (Map, MapView, Graphic, GraphicsLayer) {
+  "esri/layers/GraphicsLayer",
+  "esri/geometry/Polyline"
+], function (Map, MapView, Graphic, GraphicsLayer, Polyline) {
 
   let map = new Map({
     basemap: "topo-vector"
@@ -40,4 +41,25 @@ require([
   })
 
   graphicsLayer.add(pointGraphic)
+
+  let simpleLineSymbol = {
+    type: "simple-line",
+    color: [226, 119, 40],
+    width: 2
+  }
+
+  let polyline = new Polyline({
+    paths: [
+      [-118.821527826096, 34.0139576938577],
+      [-118.814893761649, 34.0080602407843],
+      [-118.808878330345, 34.0016642996246]
+    ]
+  })
+
+  let polylineGraphic = new Graphic({
+    geometry: polyline,
+    symbol: simpleLineSymbol
+  })
+
+  graphicsLayer.add(polylineGraphic)
 });
