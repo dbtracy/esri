@@ -78,11 +78,12 @@ require([
 
   let simpleFillSymbol = {
     type: "simple-fill",
-    color: [227, 139, 79, 0.8],
+    color: [50, 100, 255, .5],
     outline: {
-      color: [255, 255, 255],
+      // color: [50, 100, 255],
       width: 1
-    }
+    },
+    style: "backward-diagonal"
   }
 
   let polygonGraphic = new Graphic({
