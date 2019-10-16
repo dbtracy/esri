@@ -28,11 +28,12 @@ require([
 
   let simpleMarkerSymbol = {
     type: "simple-marker",
-    color: [226, 119, 40],
+    color: [0, 150, 50],
     outline: {
       color: [255, 255, 255],
-      width: 1
-    }
+      width: 2
+    },
+    size: 10
   }
 
   let pointGraphic = new Graphic({
@@ -44,8 +45,9 @@ require([
 
   let simpleLineSymbol = {
     type: "simple-line",
-    color: [226, 119, 40],
-    width: 2
+    color: [255, 0, 0],
+    width: 2,
+    style: "dash"
   }
 
   let polyline = new Polyline({
@@ -62,4 +64,31 @@ require([
   })
 
   graphicsLayer.add(polylineGraphic)
+
+  let polygon = {
+    type: "polygon",
+    rings: [
+      [-118.818984489994, 34.0137559967283],
+      [-118.806796597377, 34.0215816298725],
+      [-118.791432890735, 34.0163883241613],
+      [-118.79596686535, 34.008564864635],
+      [-118.808558110679, 34.0035027131376]
+    ]
+  }
+
+  let simpleFillSymbol = {
+    type: "simple-fill",
+    color: [227, 139, 79, 0.8],
+    outline: {
+      color: [255, 255, 255],
+      width: 1
+    }
+  }
+
+  let polygonGraphic = new Graphic({
+    geometry: polygon,
+    symbol: simpleFillSymbol
+  })
+
+  graphicsLayer.add(polygonGraphic)
 });
