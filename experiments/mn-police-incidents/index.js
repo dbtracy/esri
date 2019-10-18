@@ -31,7 +31,6 @@ require([
         let incidentData = JSON.parse(data)
         const incidents = incidentData.features.map(incident => {
 
-          // console.log(incidents)
           let incidentLocation = {
             type: "point",
             longitude: incident.geometry.x,
@@ -55,8 +54,6 @@ require([
 
           return incidentGraphic
         })
-        console.log(incidentData)
-        console.log(incidents)
         graphicsLayer.addMany(incidents)
       } else {
         console.log('STILL GOT PROBLEMS')
