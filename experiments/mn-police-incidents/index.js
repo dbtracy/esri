@@ -29,6 +29,7 @@ require([
       })
       if (data) {
         let incidentData = JSON.parse(data)
+        console.log(incidentData.features)
         const incidents = incidentData.features.map(incident => {
 
           let incidentLocation = {
@@ -47,9 +48,27 @@ require([
             size: 8
           }
 
+          let incAtts = incident.attributes
+
+          let attributes = {
+            Name: `${incAtts.offense}`,
+            Time: `${incAtts.reportedTime}`,
+            Address: `${incAtts.publicaddress}`,
+            Neighborhood: `${incAtts.neighborhood}`,
+
+          }
+
+          let popupTemplate = {
+            title: `{Name}`,
+            content: `<b>{Address}</b>` + "<br/>" +
+              `<b>{Neighborhood}, Minneapolis, MN</b>`
+          }
+
           let incidentGraphic = new Graphic({
             geometry: incidentLocation,
             symbol: incidentMarker,
+            attributes: attributes,
+            popupTemplate: popupTemplate
           })
 
           return incidentGraphic
