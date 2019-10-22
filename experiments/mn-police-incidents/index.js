@@ -7,6 +7,12 @@ require([
   "esri/Graphic",
   "dojo/domReady!"
 ], function (request, Map, MapView, GraphicsLayer, FeatureLayer, Graphic) {
+  let dojoConfig = {
+    has: {
+      "esri-featurelayer-webgl": 1
+    }
+  }
+
   const map = new Map({
     basemap: "streets"
   })
@@ -22,16 +28,17 @@ require([
   map.add(graphicsLayer)
 
   // const getData = async (req, res, next) => {
-  //   console.log(res)
+  //   console.log(req)
   //   try {
   //     const data = await request.get("https://services.arcgis.com/afSMGVsC7QlRK1kZ/arcgis/rest/services/Police_Incidents_2018_PIMS/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json", {
   //       headers: {
-  //         "X-Requested-With": null,
+  //         "X-Requested-With": null
   //       }
   //     })
   //     if (data) {
+  //       console.log(data)
   //       let incidentData = JSON.parse(data)
-  //       console.log(incidentData.features)
+  //       // console.log(incidentData.features)
   //       const incidents = incidentData.features.map(incident => {
 
   //         let incidentLocation = {
@@ -85,18 +92,16 @@ require([
   // }
   // getData()
 
-  let serviceUrl = "https://services.arcgis.com/afSMGVsC7QlRK1kZ/arcgis/rest/services/Police_Incidents_2018_PIMS/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+  let serviceUrl = "https://services.arcgis.com/afSMGVsC7QlRK1kZ/arcgis/rest/services/Police_Incidents_2018_PIMS/FeatureServer/0/"
 
-  let layer = new FeatureLayer(serviceUrl, {
+  let layer = new FeatureLayer({
+    url: serviceUrl,
     // featureReduction: {
     //   type: "cluster"
     // }
   })
-  console.log(layer)
   // layer.setFeatureReduction({
   //   type: "cluster"
   // })
   map.layers.add(layer)
 })
-
-
